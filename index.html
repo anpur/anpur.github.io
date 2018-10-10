@@ -1,0 +1,71 @@
+<html>
+<head>
+    <script src="./twilsock.js"></script>
+    <style>
+    #messages {
+        font-family:  monospace;
+    }
+    .timestamp {
+        color: gray;
+        font-size: smaller;
+    }
+    .code {
+        font-family:  monospace;
+        color: gray;
+        word-break: break-all;
+    }
+    </style>
+</head>
+<body>
+    <input id="product-txt" type="text" placeholder="product" value="chat" /><br />
+    <input id="token-txt" type="text" placeholder="token" /><br />
+    <input id="connect-btn" type="button" value="Connect" /><br />
+    <div id='messages'>
+    </div>
+
+    <script>
+    window.onload = () => {
+        let realConsoleError = console.error;
+        console.error = (...arguments) => { 
+            realConsoleError(arguments);
+            addMessage("Error: " + arguments);
+        }
+
+        let realConsoleWarning = console.warn;
+        console.warn = (...arguments) => { 
+            realConsoleWarning(arguments);
+            addMessage("Warning: " + arguments);
+        }
+
+        let addMessage = message => document.getElementById('messages').innerHTML += '<span class="timestamp">' + new Date().toISOString() + '</span> ' + message + '<br>';
+
+        document.getElementById('connect-btn').onclick = () => {
+            let product = document.getElementById('product-txt').value;
+            let token = document.getElementById('token-txt').value;
+            let options = { logLevel: 'debug' };
+
+            if (!product || !token) {
+                console.error("Fill product and token");
+                return;
+            }
+
+            addMessage('Client created');
+
+            let twilsock = new Twilio.Twilsock.TwilsockClient(token, product, options);
+            addMessage('Client created');
+            document.twilsock = twilsock;
+
+            twilsock.on('stateChanged', state => addMessage('stateChanged ' + state));
+            twilsock.on('message', (type, message) => addMessage(type + ' ' + state));
+            twilsock.on('registered', () => addMessage('registered'));
+            twilsock.on('connected', () => addMessage('connected'));
+            twilsock.on('disconnected', () => addMessage('disconnected'));
+            twilsock.on('tokenExpired', () => addMessage('tokenExpired'));
+            twilsock.on('tokenAboutToExpire', () => addMessage('tokenAboutToExpire'));
+            
+            twilsock.connect();
+        };
+    };
+    </script>
+</body>
+</html>

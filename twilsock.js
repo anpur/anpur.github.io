@@ -1677,7 +1677,9 @@ class WebSocketChannel extends events_1.EventEmitter {
             this.socket.onclose = null;
             this.socket.onerror = null;
             this.socket.onmessage = null;
-            this.socket.close();
+            try {
+                this.socket.close();
+            } finally {}
         }
     }
 }

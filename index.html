@@ -27,13 +27,13 @@
     window.onload = () => {
         let realConsoleError = console.error;
         console.error = (...arguments) => { 
-            realConsoleError(arguments);
+            realConsoleError.apply(this, arguments);
             addMessage("Error: " + arguments);
         }
 
         let realConsoleWarning = console.warn;
         console.warn = (...arguments) => { 
-            realConsoleWarning(arguments);
+            realConsoleWarning.apply(this, arguments);
             addMessage("Warning: " + arguments);
         }
 

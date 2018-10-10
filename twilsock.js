@@ -1430,9 +1430,13 @@ class TwilsockChannel extends events_1.EventEmitter {
         }
     }
     retry() {
-        logger_1.log.trace('retry');
-        this.websocket.close();
-        this.fsm.userRetry();
+        if (this.fsm.state != 'connecting') {
+            logger_1.log.trace('retry');
+            this.websocket.close();
+            this.fsm.userRetry();
+        } else {
+            logger_1.log.trace('can\t retry as already connecting');
+        }
     }
     onConnected() {
         this.emit('connected');

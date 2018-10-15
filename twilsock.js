@@ -145,6 +145,11 @@ class BackoffRetrier extends events_1.EventEmitter {
             this.retrier.failed(new Error());
         }
     }
+    cancel() {
+        if (this.retrier) {
+            this.retrier.cancel();
+        }
+    }
     cleanRetrier() {
         if (this.retrier) {
             this.retrier.removeAllListeners();
@@ -1424,7 +1429,7 @@ class TwilsockChannel extends events_1.EventEmitter {
     initRetry() {
         logger_1.log.debug('initRetry');
         if (this.retrier.inProgress) {
-            this.retrier.attemptFailed();
+            this.retrier.cancel();
         } else {
             this.retrier.start();
         }
